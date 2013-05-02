@@ -26,7 +26,8 @@
 
 \maketitle
 
-\section{Inhalt}
+
+
 \begin{frame}
     \frametitle{Inhalt}
     \begin{itemize}
@@ -48,46 +49,132 @@
 \section{Grundlegendes}
 \begin{frame} 
     \frametitle{Grundlegendes}
-%     \begin{minipage}[c]{5cm}
-%	    \includegraphics[width = 3cm]{Prozess_A.eps}
-%	\end{minipage}
-%	\begin{minipage}[c]{5cm}
-%	 \begin{tabular}{ l  p{5cm} }
-%		Summary \\ 
-%		clear day with lots of sunshine.  \\ 
-%	    
-%	\end{tabular}
-%	
-%    \end{minipage}
+    
+    Bild zu Thema fehlt noch\\
+    
+    \begin{itemize}
+    	\item Stack: 
+		\begin{itemize}
+			\item Umgebungsvariablen, Kommandozeile
+			\item veränderbar
+		\end{itemize}
+	\item Datensegment: (Bild : BSS und Daten) 
+		\begin{itemize}
+			\item initialisierte Daten    
+			\item uninitialisierte Daten ( Verweis auf Zeropage)
+		\end{itemize}
+	\item Textsegment: 
+		\begin{itemize}
+			\item Maschinenbefehle
+			\item nur lesender Zugriff
+			\item keine Größenänderung mögl. 
+		\end{itemize}
+    \end{itemize}
    
-\renewcommand{\arraystretch}{1.2}
-{\tiny
-\begin{tabular}{ | c | c | m{5cm} |}
-    	\cline{1-1} \cline{3-3} 
-	Stack &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}               &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-              &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	      &  &   \\ \cline{1-1} \cline{3-3}
-	BSS   &  &   \\ \cline{1-1} \cline{3-3} 
-	Daten &  &   \\ \cline{1-1} \cline{3-3}    
-	Daten &  &   \\ \cline{1-1} \cline{3-3} 
-	Text  &  &   \\ \cline{1-1} \cline{3-3}  
-	
-    \end{tabular}
-}
+%\renewcommand{\arraystretch}{1.2}
+%{\tiny
+%\begin{tabular}{ | c | c | m{5cm} |}
+    %	\cline{1-1} \cline{3-3} 
+	%Stack &  &   \\ \cline{1-1} \cline{3-3}
+	    %  &  &   \\ \cline{1-1} \cline{3-3}               &  &   \\ \cline{1-1} \cline{3-3}
+	  %    &  &   \\ \cline{1-1} \cline{3-3}
+	      %&  &   \\ \cline{1-1} \cline{3-3}
+            %  &  &   \\ \cline{1-1} \cline{3-3}
+	    %  &  &   \\ \cline{1-1} \cline{3-3}
+	  %    &  &   \\ \cline{1-1} \cline{3-3}
+	      %&  &   \\ \cline{1-1} \cline{3-3}
+%	      &  &   \\ \cline{1-1} \cline{3-3}
+%	      &  &   \\ \cline{1-1} \cline{3-3}
+%	      &  &   \\ \cline{1-1} \cline{3-3}
+%	      &  &   \\ \cline{1-1} \cline{3-3}
+%	      &  &   \\ \cline{1-1} \cline{3-3}
+%	      &  &   \\ \cline{1-1} \cline{3-3}
+%	BSS   &  &   \\ \cline{1-1} \cline{3-3} 
+%	Daten &  &   \\ \cline{1-1} \cline{3-3}    
+%	Daten &  &   \\ \cline{1-1} \cline{3-3} 
+%	Text  &  &   \\ \cline{1-1} \cline{3-3}  
+%	
+%    \end{tabular}
+%}
 %\renewcommand{\arraystrech}{1}
 
 \end{frame}
+
+\begin{frame} 
+    \frametitle{Grundlegendes}
+    \framesubtitle{Shared Text Segment}
+    
+    Grafik....
+    
+    
+    
+    
+\end{frame}
+
+\begin{frame} 
+    \frametitle{Grundlegendes}
+    \framesubtitle{Memory-Mapped-Dateien}
+    
+    \includegraphics[width=9cm]{segmente.eps}
+    
+    
+    
+    
+\end{frame}
+
+\section{Implementierung der Speicherverwaltung}
+%\begin{frame}
+%    \frametitle{was ihr wollt}
+%   
+%   \begin{itemize}
+%         		\item 3 Speicherzonen: ( Grafik noch einfügen)
+%
+%		\begin{itemize}
+%			\item 1 Zone_DMA
+%			\item 2 Zone_Normal
+%			\item 3 Zone_Highmen
+%		\end{itemize}
+%   	\end{itemize} 
+%\end{frame}
+
+\begin{frame}
+    \frametitle{noch unklar}
+   
+   \begin{itemize}
+         		\item Seitendekriptor
+		\item Zonendeskriptor
+		\item Knotendeskriptor\\
+			
+			----eventuell mit Grafik--
+			
+	
+   	\end{itemize} 
+
+   
+       
+\end{frame}
+
+
+
+\section{Systemaufrufe}
+\begin{frame}
+    \frametitle{Systemaufrufe zur Speicherverwaltung}
+   
+    \begin{center}
+   	 \begin{tabular}{ | l |m{5cm} |}
+   	 \hline
+   	 Systemaufruf & Beschreibung \\ \hline
+    	s= brk(addr) & Datensegmentgröße ändern \\ \hline
+    	a = mmap(addr, len, prot, flags, fd, offset)&  Datei einblenden \\ \hline
+    	s = munmap(addr, len)  & Dateieinblendung beenden\\ \hline
+    	\end{tabular}
+    \end{center} 
+       
+\end{frame}
+
+
+
+
 
 \section{virtueller Speicher}
 \begin{frame}
@@ -112,7 +199,7 @@
     
 \end{frame}
 
-\section{virtueller Speicher}
+%\section{virtueller Speicher}
 \begin{frame}
     \frametitle{Repräsentation des virtuellen Adressraumes}
     \framesubtitle {Paging in Linux}
@@ -132,12 +219,13 @@
     
 \end{frame}
 
-\section{virtueller Speicher}
+
 \begin{frame}
     \frametitle{Repräsentation des virtuellen Adressraumes}
     \framesubtitle {Paging in Linux}
     \begin{itemize}
-         \item Nutzung 4-stufiger Seitentabellen in Linux
+         \item Nutzung 4-stufiger Seitentabellen in Linux\\
+         --------Grafik überarbeiten ----------
 	\includegraphics[width=6cm]{Seitentab.eps} 		
     
     
@@ -145,9 +233,11 @@
     
 \end{frame}
 
-\section{virtueller Speicher}
+
 \begin{frame}
-    \frametitle{Repräsentation des virtuellen Adressraumes}
+ 
+    \frametitle {Repräsentation des virtuellen Adressraumes}
+    
     \framesubtitle {Paging in Linux}
     \begin{itemize}
          \item  Grundeinheit: Seite
@@ -155,8 +245,7 @@
         \begin{quote}
          \textquotedblleft
          Paging ist ein Speicherverwaltungsverfahren, das auf der Strukturierung  des virtuellen Speichers 	in Seiten und der Strukturierung des realen Speichers in Seitenrahmen beruht.
-    	\textquotedblright \footnote {EHSES, E. u.a. : Betriebssysteme- Ein Lehrbuch mit Übungen zur   	Systemrogrammierung in UNIX/Linux. 3. Aufl. München: Pearson Studium Verlag, 2005, S.294  }
-	\end{quote}
+    	\textquotedblright 	\end{quote}
  	 \item Nutzung 4-stufiger Seitentabellen in Linux
 	 \item Realisierung sowohl durch kern als auch durch Page-Daemon
 	 \item Demand - Paging - System unter Nutzung des Swap-Bereiches
@@ -170,12 +259,28 @@
     
 \end{frame}
 
-
-\section{virtueller Speicher}
 \begin{frame}
-    \frametitle{Repräsentation des virtuellen Adressraumes}
-    \framesubtitle {Der Seitenersetzungsalgorithmus}
- 
+	\frametitle{Repräsentation des virtuellen Adressraumes}\
+	\framesubtitle {Der Seitenersetzungsalgorithmus}
+ 	\begin{itemize}
+		\item per Page Frame Reclaiming Algorithmn
+		\item Unterscheidung von vier Seitenarten:
+	\end{itemize}	
+		
+		\begin{center}
+		{\tiny
+		\begin{tabular}{ l l }
+ 			 unreclaimable :&  reserviert/gesperrt/nicht auslagerbar \\
+  			 swappable:       &  zurück auf Swap bzw Auslagerungspartition vor Neuanforderung\\
+ 			 syncable:		 &  zurück auf Platte, falls verändert\\
+			 discardable:      & sofort anforderbar\\
+		\end{tabular}
+		}
+		\end{center}
+		
+		zu beenden
+
+			
     
 \end{frame}
 
