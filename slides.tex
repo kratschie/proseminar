@@ -1,17 +1,14 @@
 \documentclass[ddcfooter,nosectionnum]{tudbeamer}
 \usepackage{german}
 \usepackage{graphicx}
-
 \usepackage{listings}
 \usepackage{setspace}
 \usepackage{array}
 \usepackage{wrapfig}
-
-
-
-
 \usepackage{fontspec}
 \usepackage{xltxtra}
+\usepackage[font=scriptsize,labelfont=bf]{caption}
+
 \setmainfont{Ubuntu}
 \setmonofont{Courier}
 \setromanfont{Ubuntu}
@@ -34,17 +31,28 @@
 	\tableofcontents
 \end{frame}
 
-
-
 \section{Grundlagen}
+\begin{frame} 
+    \frametitle{Grundlagen}
+    	\begin{itemize}
+			\item Physischer Speicher in Seiten strukturiert
+			\begin {itemize}
+				\item 32-bit Architektur meist 4Kb Seiten, 4 GB adressierbar				\item 64-bit Architektur meist 8Kb Seiten, 16 Exabyte adressierbar
+    		\end{itemize}
+			\item Virtueller Adressraum je Prozess (auf 32-bit-Maschinen)
+			\begin {itemize}
+				\item 3 GB virtueller Adressraum: Text-, Daten-, BBS-Segment, Stapel			\item 1 GB: Seitentabellen und andere Informationen des Kerns    			\end{itemize}
+    \end{itemize}
+    \end{frame}
+
+
 \begin{frame}
 	\frametitle{Grundlagen}
     \framesubtitle {Gliederung eines Linux-Prozess-Adressraumes }
 	
-		\begin{table}[ht]
+		\begin{table}
 		\centering
-			\begin{tabular}{*{2}{m{0.5\textwidth}}}
-			\includegraphics[width = 3cm]{folie_1.eps} &
+			\begin{tabular}{*{2}{m{0.6\textwidth}}}
 			\begin{itemize}
 		 		\item Stack:  
 				\begin{itemize}
@@ -54,7 +62,7 @@
 				\item Datensegment:  
 				\begin{itemize}
 					\item initialisierte Daten    
-					\item uninitialisierte Daten ( Verweis auf Zeropage)
+					\item uninitialisierte Daten
 				\end{itemize}
 				\item Textsegment: 
 				\begin{itemize}
@@ -63,7 +71,7 @@
 					\item keine Größenänderung mögl. 
 				\end{itemize}
     		\end{itemize}
-%&\includegraphics[width=4cm]{folie_1.eps}
+&\includegraphics[width = 1.8cm]{segmente.png}
 			\end{tabular}
 			\label{tab:gt}
 		\end{table}
@@ -74,66 +82,84 @@
     \frametitle{Grundlagen}
     \framesubtitle{Memory-Mapped-Dateien}
     \begin{figure}[p]  
-    \includegraphics[width=9cm]{segmente.eps}
-    \caption{Kao,O.; Vorlesung Betriebssysteme; Universität Paderborn; 2005)} 
+    \includegraphics[width=9.3cm]{mmd.png}
+    \caption{ Kao, O.; Vorlesung Betriebssysteme; Universität Paderborn; 2005}
      \end{figure}
 \end{frame}
 
-\section{Implementierung der Speicherverwaltung}
-%\begin{frame}
-%    \frametitle{was ihr wollt}
-%   
-%   \begin{itemize}
-%         		\item 3 Speicherzonen: ( Grafik noch einfügen)
-%
-%		\begin{itemize}
-%			\item 1 Zone_DMA
-%			\item 2 Zone_Normal
-%			\item 3 Zone_Highmen
-%		\end{itemize}
-%   	\end{itemize} 
-%\end{frame}
+
+
+\section{Physischer Speicher}
+\begin{frame}
+    \frametitle{Verwaltung des Physischen Speichers}   
+   	  \begin{itemize}
+      	\item Unterscheidung von 3 Speicherzonen: 
+		\begin{description}
+					\item 1. ZONE\_DMA 
+					\item 2. ZONE\_NORMAL
+					\item 3. ZONE\_HIGHMEN
+				\end{description} 
+
+	  
+			
+			
+%			\begin{tabular}{*{2}{m{0.5\textwidth}}}
+%				\begin{description}
+%					\item 1. ZONE\_DMA 
+%					\item 2. ZONE\_NORMAL
+%					\item 3. ZONE\_HIGHMEN
+%				\end{description} &
+%			\begin{figure}
+%     
+%      \includegraphics[width=2.5cm]{zonen.png}
+%     \end{figure}
+%	\end{tabular}
+	
+	\item Arbeitsspeicher 3 Teile: 
+	\begin{itemize}
+		\item Kern
+		\item Speicherzuordnungtabelle
+		\item restlicher Anteil: Aufteilung in Seitenrahmen
+	\end{itemize}
+	\end{itemize}
+\end{frame}
 
 \begin{frame}
-    \frametitle{noch unklar}
-   
-   \begin{itemize}
-         		\item Seitendeskriptor
-		\item Zonendeskriptor
-		\item Knotendeskriptor\\
-			
-			----eventuell mit Grafik--
-			
-	
+	\frametitle{Verwaltung des Physischen Speichers}
+    \begin{itemize}
+    	\item Seitendeskriptoren
+        \begin{itemize}
+			\item Zeiger auf zugehörigen Adressraum
+			\item Typ: \texttt{page}, Name: \texttt{mem\_map}
+       	\end{itemize}
+		\item Zonendeskriptoren
+		\begin{itemize}
+			\item Informationen für Speicherausnutzung jeder Zone
+			\item Identifizierung freier Arbeitsspeicherbereiche durch
+			\texttt{free\_area[]}
+		\end{itemize}
+		\item Knotendeskriptoren
+		\begin {itemize}
+			\item zur Differenzierung zwischen physischem Speicher auf verschiedenen Knoten	
+			\item Informationen über Speichernutzung und Zonen des speziellen Knotens
+		\end {itemize}			
    	\end{itemize} 
 
    
        
 \end{frame}
 
+\begin{frame}
+	\framesubtitle{Mechanismen zur Speicherbelegung}
+	\begin{itemize}
+		\item\textbf{Page Allocator}unter Nutzung des Buddy-Algorithmuses
+	
+	\end{itemize}
+	
+	
+\end{frame}	
 
-
-%\section{Systemaufrufe}
-%\begin{frame}
-%    \frametitle{Systemaufrufe zur Speicherverwaltung}
-%   
-%    \begin{center}
-%   	 \begin{tabular}{ | l |m{5cm} |}
-%   	 \hline
-%   	 Systemaufruf & Beschreibung \\ \hline
-%    	s= brk(addr) & Datensegmentgröße ändern \\ \hline
-%    	a = mmap(addr, len, prot, flags, fd, offset)&  Datei einblenden \\ \hline
-%    	s = munmap(addr, len)  & Dateieinblendung beenden\\ \hline
-%    	\end{tabular}
-%    \end{center} 
-%       
-%\end{frame}
-
-
-
-
-
-\section{virtueller Speicher}
+\section{Virtueller Speicher}
 \begin{frame}
     \frametitle{Virtueller Adressraum}
     \begin{itemize}
@@ -145,7 +171,7 @@
 \end{frame}
 
 
-\section{virtueller Speicher}
+
 \begin{frame}
     \frametitle{Virtuellen Adressraum}
     \begin{itemize}
@@ -190,7 +216,7 @@
     \begin{itemize}
          \item Nutzung 4-stufiger Seitentabellen in Linux\\
          --------Grafik überarbeiten ----------
-	\includegraphics[width=6cm]{Seitentab.eps} 		
+	%\includegraphics[width=6cm]{Seitentab.eps} 		
     
     
      \end{itemize}
