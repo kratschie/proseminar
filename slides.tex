@@ -41,7 +41,7 @@
     		\end{itemize}
 			\item Virtueller Adressraum je Prozess (auf 32-bit-Maschinen)
 			\begin {itemize}
-				\item 3 GB virtueller Adressraum: Text-, Daten-, BBS-Segment, Stapel			\item 1 GB: Seitentabellen und andere Informationen des Kerns    			\end{itemize}
+				\item 3 GB virtueller Adressraum: Text-, Daten-, BBS-Segment, Stack			\item 1 GB: Seitentabellen und andere Informationen des Kerns    			\end{itemize}
     \end{itemize}
     \end{frame}
 
@@ -150,30 +150,41 @@
 \end{frame}
 
 \begin{frame}
-	\framesubtitle{Mechanismen zur Speicherbelegung}
+\frametitle{Physischer Speicher}
+\framesubtitle{Mechanismen zur Speicherbelegung}
 	\begin{itemize}
-		\item\textbf{Page Allocator}unter Nutzung des Buddy-Algorithmuses
+		\item Page Allocator unter Nutzung des Buddy-Algorithmus
+	\end{itemize}
+	\begin{figure}[p] 
+		\includegraphics[width=8.5cm]{buddy.png}
+		\caption{ Tanenbaum, A.; Moderne Betriebssysteme; 3. Auflage}
+\end{figure} 
+	
+\end{frame}	
+
+\begin{frame}
+\frametitle{Physischer Speicher}
+\framesubtitle{Mechanismen zur Speicherbelegung}
+	\begin{itemize}
+		\item Page Allocator unter Nutzung des Buddy-Algorithmus
+	
+	
+		\includegraphics[width=7.5cm]{buddy.png}\\
+		--> Problem: interne Fragmentierung\\
+		--> Lösung:  Slab-Allocator 
+		\item Funktion \texttt{vmalloc}
 	
 	\end{itemize}
 	
-	
 \end{frame}	
+
+
+
+
 
 \section{Virtueller Speicher}
 \begin{frame}
     \frametitle{Virtueller Adressraum}
-    \begin{itemize}
-         \item   Unterteilung in homogene, zusammenhängende, an Seitengrenzen ausgerichtete 			Regionen
-         \item fixe Seitengröße, erweiterbar durch PAE
-        
-     \end{itemize}
-    
-\end{frame}
-
-
-
-\begin{frame}
-    \frametitle{Virtuellen Adressraum}
     \begin{itemize}
     	    \item Beschreibung jedes Kernbereichs mit \texttt{vm\_area\_struct}-Eintrag 
    		\begin{itemize}
@@ -201,11 +212,7 @@
          „Paging ist ein Speicherverwaltungsverfahren, das auf der Strukturierung  des virtuellen Speichers 	in Seiten und der Strukturierung des realen Speichers in Seitenrahmen beruht.“
          \footnote{EHSES, E. u.a. : Betriebssysteme- Ein Lehrbuch mit Übungen zur Systemrogrammierung in UNIX/Linux. 3. Aufl. München: Pearson Studium Verlag, 2005, S.294}
 	\end{quote}
- 	
-	
-    
-    
-     \end{itemize}
+ \end{itemize}
     
 \end{frame}
 
@@ -214,13 +221,13 @@
     \frametitle{Virtueller Adressraum}
     \framesubtitle {Paging in Linux}
     \begin{itemize}
-         \item Nutzung 4-stufiger Seitentabellen in Linux\\
-         --------Grafik überarbeiten ----------
-	%\includegraphics[width=6cm]{Seitentab.eps} 		
-    
-    
-     \end{itemize}
-    
+         \item Nutzung eines 4-stufigen Paging-Verfahrens
+        
+    \end{itemize}
+    \begin{figure}[p]  
+    \includegraphics[width=8.3cm]{vierstufiges.png}
+    \caption{ Tanenbaum, A; Moderne Betriebssysteme; 3. Auflage}
+     \end{figure}
 \end{frame}
 
 
@@ -228,62 +235,40 @@
  
     \frametitle {Virtueller Adressraum}
     
-    \framesubtitle {Paging in Linux}
+    \framesubtitle {Der Seitenersetzungalgorithmus}
     \begin{itemize}
-         \item  Grundeinheit: Seite
-         \item Grundidee / Definition Paging: \\
-        \begin{quote}
-         „Paging ist ein Speicherverwaltungsverfahren, das auf der Strukturierung  des virtuellen Speichers 	in Seiten und der Strukturierung des realen Speichers in Seitenrahmen beruht.“
-     	 \end{quote}
- 	 \item Nutzung 4-stufiger Seitentabellen in Linux
-	 \item Realisierung sowohl durch kern als auch durch Page-Daemon
-	 \item Demand - Paging - System unter Nutzung des Swap-Bereiches
+       
+	 \item Realisierung durch Page-Daemon \texttt{kswpd}
+	 \item Demand-Paging-System unter Nutzung des Swap-Bereiches
 	 \begin{itemize}
 	 	\item Auslagerungspartitionen 
 		\item Auslagerungsdateien
 	\end{itemize}
-    
-    
-     \end{itemize}
-    
-\end{frame}
-
-\begin{frame}
-	\frametitle{Virtueller Adressraum}\
-	\framesubtitle {Der Seitenersetzungsalgorithmus}
- 	\begin{itemize}
+		
 		\item per Page Frame Reclaiming Algorithmus
 		\item Unterscheidung von vier Seitenarten:
+		\begin{itemize}
+			\item nicht anforderbar
+			\item auslagerbar
+			\item synchronisierbar
+			\item löschbar
+		\end{itemize}	
 	\end{itemize}	
-		
-		\begin{center}
-		{\tiny
-		\begin{tabular}{ l l }
- 			 unreclaimable :&  reserviert/gesperrt/nicht auslagerbar \\
-  			 swappable:       &  zurück auf Swap bzw Auslagerungspartition vor Neuanforderung\\
- 			 syncable:		 &  zurück auf Platte, falls verändert\\
-			 discardable:      & sofort anforderbar\\
-		\end{tabular}
-		}
-		\end{center}
-		
-		zu beenden
-
-			
+		  
     
 \end{frame}
-
-
 
 \section{Zusammenfassung}
 \begin{frame}
     \frametitle{Zusammenfassung}
     \begin{itemize}
-         \item   
-    
-    
-    
-     \end{itemize}
+    	\item gradlinig, architekturunabhängig --> hohe Portabilität durch:
+		\begin{itemize}
+			\item Memory Zones
+			\item wenig Verschnitt durch Buddyalgorithmus und Slab-Allocator
+			\item schnell per-CPU page frame cache, slab caches
+		\end{itemize}
+    \end{itemize}
     
 \end{frame}
 
@@ -297,8 +282,8 @@
 	\item	 UNIX - Wie funktioniert das Betriebssystem? \\
 		Maurice J. Bach - 1991
 	\item Betriebssysteme\\
-		EIn Lehrbuch mit Übungen zur Systemprogrammierung in UNIX/ Linux \\
-		E.Ehses, L. Köhler, P. Riemer, H. Stenzel, F. Victor - 2010	
+		Ein Lehrbuch mit Übungen zur Systemprogrammierung in UNIX/ Linux \\
+		E. Ehses, L. Köhler, P. Riemer, H. Stenzel, F. Victor - 2010	
     \end{itemize}
     
 \end{frame}

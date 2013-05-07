@@ -222,8 +222,8 @@
 
 \setbeamerfont{itemize/enumerate subbody}{size=\scriptsize}
 \setbeamerfont{itemize/enumerate subsubbody}{size=\scriptsize}
-\setbeamerfont{title}{size=\LARGE,series=\bfseries,family=\dinfamily}
-\setbeamerfont{subtitle}{series=\bfseries,family=\sffamily}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries,family=\sffamily}
+\setbeamerfont{subtitle}{size=\large,series=\bfseries,family=\sffamily}
 
 \beamertemplatedotitem
 \usesubitemizeitemtemplate{--}
