@@ -146,14 +146,15 @@
 \frametitle{Physischer Speicher}
 \framesubtitle{Mechanismen zur Speicherbelegung}
 	\begin{itemize}
-		\item<1-3> Speicherallokation unter Nutzung des Buddy-Algorithmus
-
-		\includegraphics<1-3>[width=7.5cm]{buddy.png}\\
-		\texttt{\tiny Quelle:Tanenbaum, A.; Moderne Betriebssysteme; 3. Auflage}\\
+		\item<1-4> Speicherallokation unter Nutzung des Buddy-Algorithmus
+		\includegraphics[width=7.5cm]{buddy.png}\\		 
+		\visible<1>{\texttt{\tiny Quelle:Tanenbaum, A.; Moderne Betriebssysteme; 3. Auflage}}
 		\pause
+		
 	Problem: interne Fragmentierung\\ 
-	\item<2-3> Lösung: Slab-Allocator 
-	\item<3> Funktion \texttt{vmalloc}	
+	\pause
+	\item<3-4> Lösung: Slab-Allocator 
+	\item<4> Funktion \texttt{vmalloc}	
 	\end {itemize}	
 	
 \end{frame}	
@@ -182,8 +183,8 @@
     	    \item Beschreibung jedes Kernbereichs mit \texttt{vm\_area\_struct}-Eintrag 
    		\begin{itemize}
 			 \item sortiert und zusammengefasst nach virtueller Adresse\\
-			\item enthält Eigenschaften (Schutzrechte...)
-			--> Realisierung Copy- on-Write
+			\item enthält Eigenschaften (Schutzrechte,...)
+			--> Realisierung Copy-on-Write
 			\item Angaben über Hintergrundspeicher
     			\item Zugriff auf alle Elemenete eines Adressraums via Speicher-Deskriptor
 			\begin{itemize}

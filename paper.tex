@@ -1,0 +1,97 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\usepackage[top=2cm,left=2.5cm,right=2.5cm,bottom=2cm]{geometry}
+\usepackage{german}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage{wrapfig}
+\usepackage{xltxtra}
+
+
+\setmainfont{Charis SIL}
+
+
+\title{Speicherverwaltung in Linux}
+\author{Rebecca Kratsch}
+\date{10.05.2013}
+
+\begin{document}
+
+\maketitle
+
+
+%\begin{quote} \glqq Das Speichermodell von Linux ist geradlinig, damit Programme portabel sind und es möglich ist, Linux auf Maschinen mit sehr unterschiedlichen Speicherverwaltungseinheiten zu implementieren.\grqq 
+%\end{quote}
+
+\section*{Einführung}
+
+Der 1991 von Linus Torvalds auf Grundlage des Minix-Systems entwickelte Kernel Linux und das sich daraus ableitende gleichnamige Betriebssystem ....
+\newline
+Um die grundlegenden Konzepte, den physischen Speicher sowhol als auch um den virtuellen Speicher im Linux-Betriebssystem geht es in den folgenden Ausführungen. 
+
+\section*{Grundlagen}
+
+In Linux wird physischer Speicher in Seiten strukturiert, gängige 32-bit Architektur meist in 4KB großen Seiten, 64-bit Architektur meist in 8KB großen Seiten. Der Kern ist festverdrahtet, das heißt kein Bestandteil wird jemals ausgelagert.
+\newline
+Jeder Linux-Prozess wird logisch in drei Segmente unterteilt: 
+\newline 
+Das \textit{Textsegment} enthält die Maschinenbefehle, die den ausführenden Code des Programms ergeben. Auf das Textsegment kann nur lesend zurgriffen werden, daher ändert seine Größe nicht. 
+\newline
+Das \textit{Datensegment} enthält Speicherplatz für u.a. die Variablen, Zeichenketten und Felder des Programms. Es besteht einerseits aus einem Teil uninitialisierten Daten, welche nach dem Laden mit 0 initialisiert werden, und andererseits aus einem Teil initialisierter Daten, welche die Variablen und Konstanten des Compilers repräsenteiren, die beim Programmstart initialisiert werden. In Linux wird beim Laden eines Prozesses sein uninitialisiserter Datenbereich so gesetzt, dass er auf die sogenannte Zero-Page zeigt. Diese genullte Seite wird durch Linux alloziert, um das Reservieren eines physischen Seitenrahmens voller Nullen zu vermeiden. Versucht ein prozess in diesem Bereich zu schreiben, wird der Copy-on-Write-Mechanismus ausgelöst und ein aktueller Seitenrahmen dem Prozess zugewiesen. Das Datensegment kann im Unterschied zum Textsegment verändert werden um so mehr Speicher zu allozieren. Es wächst dem dritten Segment entgegen.
+\newline
+Das \textit{Stacksegment} stellt dieses dritte Segment in der Reihe dar. Es beginnt normalerweise am oberen ende des virtuellen Adressraums und wächst nach unten - dem Datensegment und dem darüber liegenden Heap entgegen. Sein Inhalt ist beim Start eines Programms nichts leer, sondern enthält die Shell, die Kommandozeile sowie lokale Variablen. 
+\newline
+Lassen zwei Benutzer das gleiche Prgramm zur selben Zeit laufen, unterstützen die meisten Linux-Systeme sogenannte gemeinsame Textdokumente, um die Ineffizienz zweier Kopien des Programmcodes im Speicher zu halten zu vermeiden. Daten- und Stacksegment werden dagegen nicht gemeinsam genutzt. 
+
+\newpage 
+\section*{Physischer Speicher}
+Hardwarebeschränkungen unterschiedlicher Art sind verantwortlich dafür, dass auf vielen System nicht jeder physische Speicher gleich behandelt werden kann. Linux unterscheidet daher drei Speicherzonen:
+\newline
+1. ZONE\_DMA, 0-16MB groß, für den Datentransfer mittels DMA geeigneter Seiten 
+\newline
+2. ZONE\_NORMAL, für normale, regulär abgebildete Dateien mit einer Größe über 16MB
+\newline
+3. ZONE\_HIGHMEM, für Seiten, die nicht in das Kernsegment eingeblendet werden können
+\newline
+\newline
+Alle Informationen über die Nutzung des physischen Speichers, wie zum Beispiel über freie Zonen, werden vom Kern in einer Abbildung des Arbeitsspeichers verwaltet und wie folgt organisiert: 
+\newline
+Linux verwaltet ein Feld von \textit{Seitendeskriptoren} für jeden physischen Seitenrahmen im System. Jeder Seitendeskriptor enthält einen Pointer auf den Adressraum, zu dem er gehört. Ist eine Seite nicht frei, enthält er ein Pointerpaar, um doppelt verkettete Listen mit anderen Deskriptoren zu bilden. 
+%\newline
+Für jede der bereits genannten Zonen verwaltet Linux einen \textit{Zonendeskriptor}. Dieser enthält Informationen über die Speicherausnutzung innerhalb jeder Zone.
+%\newline
+Um zwischen physischem Speicher auf verschiedenen Knoten differenzieren zu können,wie es für die Partabilität zu NUMA-Architekturen notwendig ist, nutzt Linux einen \textit{Knotendeskriptor}, welcher Informationen über die Speichernutzung und die Zonen auf diesem speziellen Knoten enthält. 
+\newline
+\newline
+Nun stellt sich die Frage, wie Linux die Belegung des physischen Speichers organisiert. Dazu unterstützt Linux mehrere Mechanismen:
+\newline
+Als Hauptmethode zum Bereitstellen neuer Seitenrahmen von physischem Speicher ist der \textit{Page Allocator}, der den Buddy-Algorithmus verwendet, zu nennen.
+Grundlegende Idee, einen Speicherbereich zu verwalten, ist folgende: Zuerst besteht der Speicher aus einem zusammenhängenden Block. Fordert ein Prozess eine bestimmte Menge Speicher an, so wird zur nächsthöheren Zweierpotenz aufgerundet und ein entsprechender Block gesucht. Falls es noch keinen Block dieser Größe gibt, wird nach einem Block doppelter Größe gesucht, der dann in zwei \glqq Buddies\grqq  aufgeteilt wird, und einer dieser Blöcke wird dem Prozess zugewiesen. Gibt es auch keinen Block doppelter Größe, wird ein Block vierfacher Größe gesucht usw. Sobald Speicher wieder freigegeben wird, wird geprüft, ob zwei durch Teilung entstandene Buddies gleicher Größe sich wieder zu einem größeren Block zusammenfassen lassen. 
+\newline
+Dieser Algorithmus führt allerdings sowohl zu erheblicher interner Fragementierung als auch zu externer Fragementierung, was die Effizienz der Speicherausnutzung enorm beeinträchtigt.
+\newline
+Um dieses Problem zu entschärfen nutzt Linux eine weitere Speicherverwaltung, den sogenannten \textit{Slab Allocator}, der Blöcke mithilfe des Buddy-Algorithmus verwendet, dann aber Slabs, sprich kleinere Einheiten, davon abshcenidet und diese separat verwaltet. 
+\newline
+Eine weitere Form der Speicherbelegung nutzt die Funktion \texttt{vmalloc}, welche eingesetzt wird, wenn die angeforderten Seiten nur im virtuellen Adressraum zusammenhängend sein müssen. Letzteres trifft auf einen Großteil der 
+angeforderten Seiten zu; jedoch führt die Verwendung von \texttt{vmalloc} zur Performanceverschlechterung und wird eher für die Belegung großer Mengen von zusammenhängendem virtuellem Adressraum benutzt. Um den virtuellen Speicher soll es nun im Folgenden gehen.
+
+\newpage 
+\section*{Virtueller Speicher}
+Der virtuelle Adressraum ist in homogene, zusammenhängende und an Seitengrenzen ausgerichtete Regionen oder Bereiche unterteilt, wobei letztere durch Lücken unterbrochen sein können. Dabei besteht jeder Bereich aus einer Reihe aufeinanderfolgender Seiten, welche alle dieselben Schutzrechte und Auslagerungseiegenschaften besitzen. Speicherreferenzen in solch eine genannte Lücke führen zu einem Seitenfehler. Der virtuelle Speicher beschreibt also den vom Betriebssystem allen Prozessen zur Verfügung gestellten Adressraum. Er ist unabhängig von der größe des real vorhandenen Speichers. Ene Ausführung von jedem in der Prozessmenge enthaltenen Prozessen wird durch zugrunde liegende Speicherverwaltungstechnik - zumeist Paging, welches anschließen beschrieben wird, - gewährleistet. 
+
+
+\subsection*{Paging}
+Wie auch andere UNIX-Versionen verschiebt Linux nicht länger ganze Prozesse in den Speicher, um sie auszuführen. Alles was wirklich benötigt wird, sind die Benutzerstruktur und die Seitentabellen, welche durch den Swapper eingelagert werden müssen, um ausführbar zu sein. Die Realisierung des Pagings geschieht teilweise durch den Kern , teilweise durch einen neuen Prozess, den \textit{Page-Daemon}. Jeder Kernbereich wird mit einem \texttt{vm\_area\_struct}-Eintrag beschrieben. Alle diese Einträge eines Prozesses sind nach virtueller Adresse zusammengefasst und in einer Liste sortiert, bei mehr als 32 Einträgen als Baum aufgebaut, um die Suche zu beschleunigen. Weiterhin enthält jeder Eintrag Eigenschaften wie beispielsweise Schutzrechte des Bereiches. Über die Information, ob ein Bereich privat für einen Prozess ist oder von mehreren Prozessen genutzt wird, Copy-on-Write realisiert. Der Zugriff auf alle Elemente eines Adressraums erfolgt durch den Speicherdeskriptor entweder über eine verkettete Liste oder aber einen binären Rot-Schwarz-Baum, je nachdem, ob auf alle Einträge zugegriffen werden muss, oder ob ein spezieller virtueller Speicher angesprochen werden soll. 
+\newline
+Um die Effizienz von Auslagerungsmechanismen auf 32- und 64-Bit-Architekturen zu gewährleisten, nutzt Linux seit der Version 2.6.10 ein vierstufiges Paging-Verfahren. Im letzten Abschnitt soll es nun um Auslagerungsstrategien gehen.
+
+\subsection*{Der Seitenersetzungsalgorthmus}
+Die Seitenersetzung in Linux ist ein Demand-Paging-System unter Nutzung von einerseits  Auslagerungspartitionen, wobei die Seiten in aufeinanderfolgenden Blöcken gespeichert werden, was effizientes Einlesen beim Wiedereinlagern ermöglicht, und andererseits von Auslagerungsdateien, die je nach Fragmentierung des Dateisystems einen erhöhten Verwaltungs- und E/A-Aufwand bedeuten können.  Linux unterscheidet dabei vier unterschiedliche Seitenarten: anfoderbare, auslagerbare, synchronisierbare und löschbare. Durch den Page-Daemon \texttt{kswapd} wird beim Unterschreiten eines Prozentsatzes freier Seiten der \textit{Page Frame Reclaiming Algorithmus} aktiviert, welcher an dieser Stelle nicht näher ausgeführt wird. Ziel des PFRA ist die Bereitstellung freier Seiten zur Erhöhung der Performance des Systems.
+
+\section*{Fazit}
+\glqq Das Speichermodell von Linux ist geradlinig, damit Programme portabel sind und es möglich ist, Linux auf Maschinen mit sehr unterschiedlichen Speicherverwaltungseinheiten zu implementieren.\grqq
+
+
+\end{document}
