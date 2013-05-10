@@ -1,4 +1,3 @@
-% !TEX encoding = UTF-8 Unicode
 \documentclass[ddcfooter,nosectionnum]{tudbeamer}
 \usepackage{german}
 \usepackage{graphicx}
@@ -8,7 +7,7 @@
 \usepackage{wrapfig}
 \usepackage{fontspec}
 \usepackage{xltxtra}
-%\usepackage[font=tiny]{caption}
+
 
 \setmainfont{Ubuntu}
 \setmonofont{Courier}
@@ -43,16 +42,16 @@
     		\end{itemize}
 			\item Virtueller Adressraum je Prozess (auf 32-bit-Maschinen)
 			\begin {itemize}
-				\item 3GB virtueller Adressraum: Text-, Daten-, BBS-Segment, Stack			\item 1GB: Seitentabellen und andere Informationen des Kerns    			\end{itemize}
+				\item 3GB virtueller Adressraum: Text-, Daten-, BSS-Segment, Stack			\item 1GB: Seitentabellen und andere Informationen des Kerns    			\end{itemize}
     \end{itemize}
-    \end{frame}
+\end{frame}
 
 
 \begin{frame}
 	\frametitle{Grundlagen}
-    \framesubtitle {Gliederung eines Linux-Prozess-Adressraumes }
+    \framesubtitle {Gliederung eines Linux-Prozess-Adressraums}
 	
-\begin{minipage}[b]{0.7\textwidth}
+	\begin{minipage}[b]{0.7\textwidth}
 			\begin{itemize}
 		 		\item Stack:  
 				\begin{itemize}
@@ -78,29 +77,17 @@
 \end{minipage} 
 \end{frame}
 
-
-%\begin{frame} 
-%    \frametitle{Grundlagen}
-%    \framesubtitle{Memory-Mapped-Dateien}
-%    \begin{figure}[p]  
-%    \includegraphics[width=9.3cm]{mmd.png}
-%    \caption{ Kao, O.; Vorlesung Betriebssysteme; Universit√§t Paderborn; 2005}
-%     \end{figure}   
-%     
-%\end{frame}
-
 \section{Physischer Speicher}
 \begin{frame}
     \frametitle{Physischer Speicher}   
     
 	\begin{minipage}[b]{0.7\textwidth} 
-		% \begin{description}
 		 	\begin{itemize}
 				\item 3 Speicherzonen: 
 				\begin{enumerate}	 	
 					\item ZONE\_DMA 
 					\item ZONE\_NORMAL
-					\item ZONE\_HIGHMEN
+					\item ZONE\_HIGHMEM
 				\end{enumerate}
 				\item Arbeitsspeicher 3 Teile: 
 				\begin{itemize}
@@ -109,9 +96,8 @@
 					\item restlicher Anteil: Aufteilung in Seitenrahmen
 				\end{itemize}
 			\end{itemize}
-		%\end{description}
 	\end{minipage}
-	%
+%
 	\begin{minipage}[t]{0.29\textwidth}
 		\includegraphics[width=0.6\textwidth]{zonen.png}
 	\end{minipage}
@@ -165,13 +151,13 @@
     \frametitle{Virtueller Adressraum}
     \framesubtitle {Paging in Linux}
     \begin{itemize}
-         \item  Grundeinheit: Seite
+         \item Grundeinheit: Seite
          \item Grundidee / Definition Paging: 
           \end{itemize}
         \begin{quote}
-          	\glqq Paging ist ein Speicherverwaltungsverfahren, das auf der Strukturierung  des virtuellen Speichers 	in Seiten und der Strukturierung des realen Speichers in Seitenrahmen beruht.\grqq
+        	\glqq Paging ist ein Speicherverwaltungsverfahren, das auf der Strukturierung  des virtuellen Speichers 	in Seiten und der Strukturierung des realen Speichers in Seitenrahmen beruht. \grqq
          \end{quote}
-         \texttt{\tiny Quelle:EHSES, E. u.a. : Betriebssysteme- Ein Lehrbuch mit Übungen zur Systemrogrammierung in UNIX/Linux. 3. Aufl. München: Pearson Studium Verlag, 2005, S.294}
+         \texttt{\tiny Quelle:EHSES, E. u.a. : Betriebssysteme- Ein Lehrbuch mit Übungen zur Systemprogrammierung in UNIX/Linux. 3. Aufl. München: Pearson Studium Verlag, 2005, S.294}
 	    
 \end{frame}
 
@@ -180,13 +166,12 @@
     \frametitle{Virtueller Adressraum}
     \framesubtitle {Paging in Linux}
     \begin{itemize}
-    	    \item Beschreibung jedes Kernbereichs mit \texttt{vm\_area\_struct}-Eintrag 
+    	    \item Beschreibung jedes Bereichs im Kern mit \texttt{vm\_area\_struct}-Eintrag 
    		\begin{itemize}
-			 \item sortiert und zusammengefasst nach virtueller Adresse\\
-			\item enthält Eigenschaften (Schutzrechte,...)
-			--> Realisierung Copy-on-Write
+			\item sortiert und zusammengefasst nach virtueller Adresse\\
+			\item enthält Eigenschaften des Bereichs
 			\item Angaben über Hintergrundspeicher
-    			\item Zugriff auf alle Elemenete eines Adressraums via Speicher-Deskriptor
+    			\item Zugriff auf alle Elemente eines Adressraums via Speicher-Deskriptor
 			\begin{itemize}
 				\item verkettete Liste
 				\item binärer Rot-Schwarz-Baum
@@ -201,31 +186,23 @@
     \frametitle{Virtueller Adressraum}
     \framesubtitle {Paging in Linux}
     \begin{itemize}
-         \item Nutzung eines 4-stufigen Paging-Verfahrens        
-   
-   %\begin{figure}[p]  
-    \includegraphics[width=8cm]{vierstufiges.png}\\
-    \texttt{\tiny Quelle:Tanenbaum, A.; Moderne Betriebssysteme; 3. Auflage}\\
-    %\end{figure}
+         \item Nutzung eines 4-stufigen Paging-Verfahrens         
+    	  \includegraphics[width=8cm]{vierstufiges.png}\\
+    	  \texttt{\tiny Quelle:Tanenbaum, A.; Moderne Betriebssysteme; 3. Auflage}\\
      \end{itemize}
 \end{frame}
 
 
-\begin{frame}
- 
+\begin{frame} 
     \frametitle {Virtueller Adressraum}
-    
     \framesubtitle {Der Seitenersetzungalgorithmus}
     \begin{itemize}
-       
-	 \item Realisierung durch Page-Daemon \texttt{kswpd} und \texttt{pdflush}
-	 \item Demand-Paging-System unter Nutzung des Swap-Bereiches
-	 \begin{itemize}
-	 	\item Auslagerungspartitionen 
-		\item Auslagerungsdateien
-	\end{itemize}
-		
-		\item per Page Frame Reclaiming Algorithmus
+    	\item Realisierung durch Page-Daemon \texttt{kswpd} und \texttt{pdflush}
+	 	\item Demand-Paging-System unter Nutzung des Swap-Bereiches
+	 	\begin{itemize}
+	 		\item Auslagerungspartitionen 
+			\item Auslagerungsdateien
+		\end{itemize}
 		\item Unterscheidung von vier Seitenarten:
 		\begin{itemize}
 			\item nicht anforderbar
@@ -233,9 +210,8 @@
 			\item synchronisierbar
 			\item löschbar
 		\end{itemize}	
+		\item per Page Frame Reclaiming Algorithmus
 	\end{itemize}	
-		  
-    
 \end{frame}
 
 \section{Zusammenfassung}
@@ -245,7 +221,7 @@
     	\item gradlinig, architekturunabhängig --> hohe Portabilität durch:
 		\begin{itemize}
 			\item Memory Zones
-			\item wenig Verschnitt durch Buddyalgorithmus und Slab-Allocator 			\item Paging
+			\item wenig Verschnitt durch Buddy-Algorithmus und Slab-Allocator 			\item Paging
 			\item Seitenersetzungsalgorithmus
 		\end{itemize}
 	 \end{itemize}
@@ -257,22 +233,19 @@
 \begin{frame}
     \frametitle{Literatur}
     \begin{itemize}
-         \item  Moderne Betriebssysteme \\
+		\item  Moderne Betriebssysteme \\
         		Andrew S. Tanenbaum - 2010
-	\item	 UNIX - Wie funktioniert das Betriebssystem? \\
+		\item	 UNIX - Wie funktioniert das Betriebssystem? \\
 		Maurice J. Bach - 1991
-	\item Betriebssysteme\\
+		\item Betriebssysteme\\
 		Ein Lehrbuch mit Übungen zur Systemprogrammierung in UNIX/ Linux \\
 		E. Ehses, L. Köhler, P. Riemer, H. Stenzel, F. Victor - 2010	
     \end{itemize}
-    
 \end{frame}
 
 \begin{frame}
-
 	\includegraphics[width= 0.9\textwidth]{br_logo_blau.png}
-
-  \end{frame}
+\end{frame}
 
 \end{document}
 
